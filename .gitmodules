@@ -1,0 +1,6 @@
+[submodule "common/wxWidgets"]
+	path = common/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets.git
+[submodule "common/llvm-project"]
+	path = common/llvm-project
+	url = https://github.com/llvm/llvm-project.git
