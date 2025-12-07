@@ -7,8 +7,8 @@ PFX="$TOP/pfx"
 
 echo
 echo "Preparing prefix..."
-rm -rf "$PFX.work"
-mkdir -p "$PFX.work"
+rm -rf "$PFX"
+mkdir -p "$PFX"
 
 echo
 echo "Preparing submodules..."
@@ -18,11 +18,11 @@ echo
 echo "Building LLVM..."
 mkdir -p build/llvm && cd build/llvm
 cmake -G Ninja \
-	-DCMAKE_INSTALL_PREFIX="/usr" \
-	-DCMAKE_INSTALL_LIBDIR="/usr/lib" \
-	-DLIBCXX_INSTALL_LIBRARY_DIR="/usr/lib" \
-	-DLIBCXXABI_INSTALL_LIBRARY_DIR="/usr/lib" \
-	-DLIBUNWIND_INSTALL_LIBRARY_DIR="/usr/lib" \
+	-DCMAKE_INSTALL_PREFIX="$PFX" \
+	-DCMAKE_INSTALL_LIBDIR="$PFX/lib" \
+	-DLIBCXX_INSTALL_LIBRARY_DIR="$PFX/lib" \
+	-DLIBCXXABI_INSTALL_LIBRARY_DIR="$PFX/lib" \
+	-DLIBUNWIND_INSTALL_LIBRARY_DIR="$PFX/lib" \
 	-DCLANG_CONFIG_FILE_SYSTEM_DIR="../lib/clang" \
 	-DCLANG_CONFIG_FILE_USER_DIR="../lib/clang" \
 	-DCMAKE_BUILD_TYPE=Release \
@@ -45,92 +45,22 @@ cmake -G Ninja \
 	-DCLANG_DEFAULT_UNWINDLIB=libunwind \
 	"$TOP/common/llvm/llvm"
 nice ninja clang lld
-DESTDIR="$PFX.work" ninja install
+ninja install
 cd "$TOP"
 
-export CC="$PFX.work/usr/bin/clang"
-export CXX="$PFX.work/usr/bin/clang++"
-export LDFLAGS="-L$PFX.work/usr/lib"
-
-echo
-echo "Building GLFW..."
-mkdir -p build/glfw && cd build/glfw
-cmake -G Ninja \
-	-DBUILD_SHARED_LIBS=ON \
-	-DCMAKE_INSTALL_PREFIX="/usr" \
-	-DCMAKE_INSTALL_LIBDIR="/usr/lib" \
-	-DGLFW_BUILD_TESTS=OFF \
-	-DGLFW_BUILD_DOCS=OFF \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	"$TOP/common/glfw"
-nice ninja
-DESTDIR="$PFX.work" ninja install
-cd "$TOP"
-
-echo
-echo "Building wxWidgets..."
-mkdir -p build/wxWidgets && cd build/wxWidgets
-cmake -G Ninja \
-	-DBUILD_SHARED_LIBS=ON \
-	-DCMAKE_INSTALL_PREFIX="/usr" \
-	-DCMAKE_INSTALL_LIBDIR="/usr/lib" \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	-DwxUSE_USE_LIBPNG=builtin \
-	"$TOP/common/wxWidgets"
-nice ninja
-DESTDIR="$PFX.work" ninja install
-cd "$TOP"
-ln -sf ../lib/wx/config/gtk3-unicode-3.3 "$PFX.work/usr/bin/wx-config"
-ln -sf ./wxrc-3.3 "$PFX.work/usr/bin/wxrc"
-
-echo
-echo "Building capnproto..."
-mkdir -p build/capnproto && cd build/capnproto
-cmake -G Ninja \
-	-DBUILD_SHARED_LIBS=ON \
-	-DCMAKE_INSTALL_PREFIX="/usr" \
-	-DCMAKE_INSTALL_LIBDIR="/usr/lib" \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	-DBUILD_TESTING=OFF \
-	"$TOP/common/capnproto"
-nice ninja
-DESTDIR="$PFX.work" ninja install
-cd "$TOP"
-
-echo
-echo "Patching capnproto..."
-mv "$PFX.work/usr/bin/capnp" "$PFX.work/usr/bin/capnp.real"
-cat >"$PFX.work/usr/bin/capnp" <<'EOF'
-#!/bin/sh
-"$(dirname "$0")/capnp.real" --no-standard-import -I"$CAPNP_SYSROOT" "$@"
-EOF
-chmod +x "$PFX.work/usr/bin/capnp"
-
-echo
-echo "Building portaudio..."
-mkdir -p build/portaudio && cd build/portaudio
-cmake -G Ninja \
-	-DBUILD_SHARED_LIBS=ON \
-	-DCMAKE_INSTALL_PREFIX="/usr" \
-	-DCMAKE_INSTALL_LIBDIR="/usr/lib" \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	"$TOP/common/portaudio"
-nice ninja
-DESTDIR="$PFX.work" ninja install
-cd "$TOP"
+export CC="$PFX/bin/clang"
+export CXX="$PFX/bin/clang++"
+export LDFLAGS="-L$PFX/lib"
 
 echo
 echo "Building ffmpeg..."
 mkdir -p build/ffmpeg && cd build/ffmpeg
 "$TOP/common/ffmpeg/configure" \
-	--prefix="/usr" \
-	--libdir="/usr/lib" \
+	--prefix="$PFX" \
+	--libdir="$PFX/lib" \
 	--enable-pic \
 	--disable-static \
 	--enable-shared
 nice make -j16
-DESTDIR="$PFX.work" make install
+make install
 cd "$TOP"
-
-rm -rf "$PFX"
-mv "$PFX.work" "$PFX"

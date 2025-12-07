@@ -1,12 +1,3 @@
-[submodule "common/wxWidgets"]
-	path = common/wxWidgets
-	url = https://github.com/wxWidgets/wxWidgets.git
-[submodule "common/capnproto"]
-	path = common/capnproto
-	url = https://github.com/capnproto/capnproto.git
-[submodule "common/portaudio"]
-	path = common/portaudio
-	url = https://github.com/PortAudio/portaudio.git
 [submodule "common/ffmpeg"]
 	path = common/ffmpeg
 	url = https://git.ffmpeg.org/ffmpeg.git
@@ -16,6 +7,3 @@
 [submodule "common/meson"]
 	path = common/meson
 	url = https://github.com/mesonbuild/meson.git
-[submodule "common/glfw"]
-	path = common/glfw
-	url = https://github.com/glfw/glfw.git
