@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Check out repo
       uses: actions/checkout@v4
@@ -15,7 +15,7 @@ jobs:
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: >
-          build-essential git meson make cmake nasm pkg-config patchelf
+          build-essential git make ninja-build nasm pkg-config patchelf
           libz-dev libwayland-dev libx11-dev libxrandr-dev libxinerama-dev
           libxcursor-dev libxi-dev libxkbcommon-dev mesa-common-dev libgles-dev
           libasound-dev

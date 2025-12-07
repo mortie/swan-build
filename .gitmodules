@@ -10,3 +10,6 @@
 [submodule "project-swan"]
 	path = project-swan
 	url = https://github.com/mortie/project-swan.git
+[submodule "common/cmake"]
+	path = common/cmake
+	url = https://github.com/Kitware/CMake.git

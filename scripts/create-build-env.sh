@@ -14,6 +14,22 @@ echo
 echo "Preparing submodules..."
 git submodule update --init --recursive
 
+# LLVM needs a fairly modern CMake,
+# we need to compile on fairly old Linux distros
+# to link against an old enough glibc ABI :(
+echo
+echo "Building CMake..."
+mkdir -p build/cmake && cd build/cmake
+"$TOP/common/cmake/bootstrap" \
+	--prefix="$PFX" \
+	--parallel=$(nproc) \
+	--generator=Ninja
+nice ninja
+ninja install
+cd "$TOP"
+
+export PATH="$PFX/bin:$PATH"
+
 echo
 echo "Building LLVM..."
 mkdir -p build/llvm && cd build/llvm

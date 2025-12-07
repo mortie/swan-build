@@ -23,6 +23,7 @@ export LD_LIBRARY_PATH="$PFX/lib"
 export LDFLAGS="-L$PFX/lib"
 export PATH="$PFX/bin:$PATH"
 export CAPNP_SYSROOT="$PFX/include"
+export PATH="$PFX/bin:$PATH"
 
 echo "Building SWAN..."
 mkdir -p build
