@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v4
+
+    - name: Get packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: >
+          build-essential git meson make cmake nasm pkg-config patchelf
+          libz-dev libwayland-dev libx11-dev libxrandr-dev libxinerama-dev
+          libxcursor-dev libxi-dev libxkbcommon-dev mesa-common-dev libgles-dev
+          libasound-dev
+        version: 1.0
+
+    - name: Create build env
+      run: ./scripts/create-build-env.sh
+
+    - name: 'Compile Project: SWAN'
+      run: ./scripts/build-swan.sh ./project-swan
+
+    - name: Package
+      run: mv out swan-bundle && tar czf swan-bundle.tgz swan-bundle
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: project-swan-bundle.tgz
+        path: project-swan-bundle.tgz

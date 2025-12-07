@@ -7,3 +7,6 @@
 [submodule "common/meson"]
 	path = common/meson
 	url = https://github.com/mesonbuild/meson.git
+[submodule "project-swan"]
+	path = project-swan
+	url = https://github.com/mortie/project-swan.git
